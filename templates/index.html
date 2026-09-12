@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Phone Mouse</title>
+</head>
+
+<body>
+
+    <h1>📱 Phone Mouse</h1>
+
+    <div id="touchpad"
+         style="width: 90%; height: 500px; border: 3px solid black; margin: auto;">
+
+        <p style="text-align:center;">
+            Touch here to move the mouse
+        </p>
+
+    </div>
+
+    <br>
+
+    <button onclick="leftClick()">LEFT CLICK</button>
+    <button onclick="rightClick()">RIGHT CLICK</button>
+
+    <script src="https://cdn.socket.io/4.7.5/socket.io.min.js"></script>
+
+    <script>
+
+        const socket = io();
+
+        let lastX = 0;
+        let lastY = 0;
+
+        const touchpad = document.getElementById("touchpad");
+
+        touchpad.addEventListener("touchstart", function(event) {
+
+            const touch = event.touches[0];
+
+            lastX = touch.clientX;
+            lastY = touch.clientY;
+
+        });
+
+        touchpad.addEventListener("touchmove", function(event) {
+
+            event.preventDefault();
+
+            const touch = event.touches[0];
+
+            const dx = touch.clientX - lastX;
+            const dy = touch.clientY - lastY;
+
+            socket.emit("mouse_move", {
+                dx: dx * 2,
+                dy: dy * 2
+            });
+
+            lastX = touch.clientX;
+            lastY = touch.clientY;
+
+        });
+
+        function leftClick() {
+            socket.emit("left_click");
+        }
+
+        function rightClick() {
+            socket.emit("right_click");
+        }
+
+    </script>
+
+</body>
+</html>
